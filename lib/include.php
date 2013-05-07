@@ -11,7 +11,7 @@ function __autoload( $class )
 
 require_once 'BeanstalkInterface.class.php';
 
-$config = array( 'servers' => array( 'bean1.ksl.com:11300' ), 'reserve_jobs' => 50, 'reserve_time' => 100 );
+$config = array( 'servers' => array( 'bean1.ksl.com:11300' ), 'reserve_jobs' => 500, 'reserve_time' => 100 );
 
 $server = !empty( $_GET[ 'server' ] ) ? $_GET[ 'server' ] : '';
 $action = !empty( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
@@ -139,7 +139,7 @@ class Console
 		$jobs_data = $this->interface->getTubeStats( $this->_globalVar[ 'tube' ] );
 		$this->_tplVars[ 'tube_name' ] = $tube_name = $jobs_data[ 0 ][ 'value' ];
 		
-		$stats = $this->interface->getJobsStats( $tube_name,5,100 );
+		$stats = $this->interface->getJobsStats( $tube_name );
 
 		$this->_tplVars[ 'jobs_count' ] = sizeof( $stats );
 		$this->_tplVars[ 'jobs_stats' ] = $stats;
