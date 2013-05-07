@@ -11,7 +11,7 @@ function __autoload( $class )
 
 require_once 'BeanstalkInterface.class.php';
 
-$config = array( 'servers' => array( /* Write here list of your servers */ ) );
+$config = array( 'servers' => array( 'bean1.ksl.com:11300' ), 'reserve_jobs' => 50, 'reserve_time' => 100 );
 
 $server = !empty( $_GET[ 'server' ] ) ? $_GET[ 'server' ] : '';
 $action = !empty( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
@@ -129,6 +129,36 @@ class Console
 		header( 
 			sprintf( 'Location: index.php?server=%s&tube=%s', $this->_globalVar[ 'server' ], 
 				$this->_globalVar[ 'tube' ] ) );
+		exit();
+	}
+
+	protected function _actionViewjobs()
+	{
+		global $config;
+
+		$jobs_data = $this->interface->getTubeStats( $this->_globalVar[ 'tube' ] );
+		$this->_tplVars[ 'tube_name' ] = $tube_name = $jobs_data[ 0 ][ 'value' ];
+		
+		$stats = $this->interface->getJobsStats( $tube_name,5,100 );
+
+		$this->_tplVars[ 'jobs_count' ] = sizeof( $stats );
+		$this->_tplVars[ 'jobs_stats' ] = $stats;
+	}
+
+	protected function _actionViewjob()
+	{
+		$result = array( 'result' => false );
+		
+		$jobId = !empty( $_POST[ 'jobId' ] ) ? $_POST[ 'jobId' ] : '';
+		
+		$content = $this->interface->getJobData( $jobId );
+
+		if ( !empty( $content ) )
+		{
+			$result = array( 'result' => true, 'content' => $content );
+		}
+		
+		echo json_encode( $result );
 		exit();
 	}
 	

@@ -16,6 +16,10 @@
           border-radius: 4px;
 }
 
+.modal-large {
+  width: 750px;
+}
+
 @media (min-width: 980px) {
    .subnav-fixed {
     position: fixed;

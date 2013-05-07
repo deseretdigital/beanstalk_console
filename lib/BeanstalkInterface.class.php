@@ -34,7 +34,7 @@ class BeanstalkInterface
 			'name' => 'the tube\'s name', 
 			'current-jobs-urgent' => 'the number of ready jobs with priority < 1024 in this tube', 
 			'current-jobs-ready' => 'the number of jobs in the ready queue in this tube', 
-			'current-jobs-reserved' => 'the number of jobs reserved by all clients in this tube', 
+			'current-jobs-reserved' => 'the n$jobs_count, $timeout = nullumber of jobs reserved by all clients in this tube', 
 			'current-jobs-delayed' => 'the number of delayed jobs in this tube', 
 			'current-jobs-buried' => 'the number of buried jobs in this tube', 
 			'total-jobs' => 'the cumulative count of jobs created in this tube', 
@@ -71,7 +71,54 @@ class BeanstalkInterface
 		}
 		return $stats;
 	}
-	
+
+	public function getJobsStats( $tube_name, $jobs_count = 500, $timeout = 100 )
+	{
+		$jobs_stats = array();
+		$descr = array(
+			'pri' => '',
+			'age' => '',
+			'delay' => '',
+			'ttr' => '',
+			'time_left' => '',
+			'reserves' => '',
+			'timeouts' => '',
+			'releases' => '',
+			'burries' => '',
+			'kicks' => '' );
+
+		$this->_client->watch( $tube_name )->ignore( 'default' );
+
+		$i = 0; unset($job_ids);
+
+		while ( $i++ < $jobs_count )
+		{
+			$job = $this->_client->reserve( $timeout );
+			$job_ids[] = $job->getId();
+		}
+		$job_ids = array_unique( $job_ids );
+
+		foreach( $job_ids as $id ) {
+			$stats = $this->_client->statsJob( $id );
+
+			unset($t);
+			$t[ 'id' ] = $id;
+
+			foreach( $descr as $k => $v ) {
+				$t[$k] = $stats[$k];
+			}
+			$jobs_stats[ $id ] = $t;
+		}
+		return $jobs_stats;
+  	}
+
+	public function getJobData( $jobId )
+	{
+		$job = $this->_client->peek( $jobId );
+		
+		return htmlspecialchars(trim(var_export($job->getData(),true), "'"), ENT_COMPAT);
+  	}
+
 	public function peekReady( $tube )
 	{
 		return $this->_peek( $tube, 'peekReady' );
@@ -104,7 +151,6 @@ class BeanstalkInterface
 	{
 		$job = $this->_client->useTube( $tube )->peekReady();
 		$this->_client->delete( $job );
-	
 	}
 	
 	public function addJob( $tubeName, $tubeData, $tubePriority = null, $tubeDelay = null, $tubeTtr = null )
@@ -114,7 +160,7 @@ class BeanstalkInterface
 		
 		return $result;
 	}
-	
+
 	public function getContentType()
 	{
 		return $this->_contentType;

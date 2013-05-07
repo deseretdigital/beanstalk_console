@@ -106,11 +106,17 @@
 	<!-- End Tube not found -->
 	 
 	<?php else:?>
-	
+		<?php if(isset($jobs_stats)):?>
+			<?php require_once '../lib/tpl/viewJobs.php';?>
+			<!-- Modal window view job -->
+			<?php require_once '../lib/tpl/modalViewJob.php';?>
+			<!-- End Modal window view job -->
+			
+		<?php else:?>
 	<!-- Table current Tube -->
-		<?php require_once '../lib/tpl/currentTube.php';?>
+			<?php require_once '../lib/tpl/currentTube.php';?>
 	<!-- End Table current Tube -->
-	
+		<?php endif;?>
 	<?php endif;?>	
 	
 	

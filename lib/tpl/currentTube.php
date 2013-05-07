@@ -19,6 +19,7 @@
 		<a class="btn btn-small" href="?server=<?=$server?>&tube=<?=$tube?>&action=kick&count=10"><i class="icon-forward"></i> Kick 10 jobs</a>
 		<a class="btn btn-danger btn-small" href="?server=<?=$server?>&tube=<?=$tube?>&action=delete&count=1"><i class="icon-trash icon-white"></i> Delete next ready job</a>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a  data-toggle="modal" class="btn btn-success btn-small" href="#" id="addJob"><i class="icon-plus-sign icon-white"></i> Add job</a>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a  class="btn btn-small" href="?server=<?=$server?>&tube=<?=$tube?>&action=viewjobs" id="viewJobs">View Jobs</a>
 	</p>
 
 	<?php foreach($peek as $state=>$job):?>

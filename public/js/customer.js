@@ -24,6 +24,12 @@ $(document).ready(
 					return false;
 				});
 
+				$('a[rel=viewJob]').live('click', function() {
+					getJobContent($(this).attr('id'));
+
+					return false;
+				});
+
 				$('#tubeSave').live('click', function() {
 					var result = addNewJob();
 
@@ -95,6 +101,29 @@ $(document).ready(
 						}
 					}
 				}
+			}
+
+			function viewJob() {
+			}
+
+			function getJobContent(jobId) {
+				$.ajax({
+					'url' : url + '&action=viewjob',
+					'data' : {'jobId' : jobId},
+					'success' : function(data) {
+						var result = data.result;
+
+						if (result) {
+							$('#modalViewJob #jobContent').val(data.content);
+							$('#modalViewJob').modal('toggle');
+						}
+					},
+					'type' : 'POST',
+					'dataType' : 'json',
+					'error' : function() {
+						console.log('error ajax...');
+					}
+				});
 			}
 
 			function addNewJob() {
